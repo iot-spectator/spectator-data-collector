@@ -1,0 +1,4 @@
+datainventory
+iothealth
+fastapi
+uvicorn

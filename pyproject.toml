@@ -1,0 +1,22 @@
+[project]
+name = "spectator-data-collector"
+version = "0.0.1"
+authors = [
+    {name="Shun Huang", email="shun@formosa1544.com"},
+    {name="Cipherman", email="cipherman@gmail.com"},
+    {name="Ricard", email="temp@email.com"}
+]
+description = "The Spectator Data Collector is the core building block that can collect various types of data, especially videos and images."
+readme = {file = "README.rst", content-type = "text/x-rst"}
+requires-python = ">=3.11"
+
+dependencies = []
+
+[tool.setuptools.packages.find]
+exclude = ["tests"]
+
+[project.urls]
+repository = "https://github.com/iot-spectator/spectator-data-collector"
+
+[project.scripts]
+data-collector = "collector.bin.run:main"
