@@ -1,4 +1,5 @@
 """Run Spectator Data Collector as a module"""
-from collector.bin import app
+from collector.bin import run
 
-app.main()
+
+run.main()

@@ -19,4 +19,4 @@ exclude = ["tests"]
 repository = "https://github.com/iot-spectator/spectator-data-collector"
 
 [project.scripts]
-data-collector = "collector.bin.app:main"
+data-collector = "collector.bin.run:main"
