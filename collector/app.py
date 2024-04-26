@@ -1,10 +1,17 @@
 """Spectator Data Collector Application."""
 
 import contextlib
+import logging
+
 import fastapi
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from collector import logger
+
+
+logger.setup_logger(level=logging.DEBUG, console=True)
+app_logger = logger.get_logger(name=__name__)
 
 ORIGINS = ["127.0.0.1:3000", "http://localhost:3000", "localhost:3000"]
 
@@ -12,9 +19,9 @@ ORIGINS = ["127.0.0.1:3000", "http://localhost:3000", "localhost:3000"]
 @contextlib.asynccontextmanager
 async def lifespan(app: fastapi.FastAPI):
     """Startup and shutdown."""
-    print("Service starts...")
+    app_logger.info("Service starts...")
     yield
-    print("Service shutdowns...")
+    app_logger.info("Service shutdowns...")
 
 
 app = fastapi.FastAPI(lifespan=lifespan)
