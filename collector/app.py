@@ -1,13 +1,23 @@
 """Spectator Data Collector Application."""
 
+import contextlib
 import fastapi
 
 from fastapi.middleware.cors import CORSMiddleware
 
 
-app = fastapi.FastAPI()
-
 ORIGINS = ["127.0.0.1:3000", "http://localhost:3000", "localhost:3000"]
+
+
+@contextlib.asynccontextmanager
+async def lifespan(app: fastapi.FastAPI):
+    """Startup and shutdown."""
+    print("Service starts...")
+    yield
+    print("Service shutdowns...")
+
+
+app = fastapi.FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,18 +26,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-def startup_event():
-    """Start services."""
-    print("Service starts...")
-
-
-@app.on_event("shutdown")
-def shutdown_event():
-    """Shutdown services."""
-    print("Service shutdowns...")
 
 
 @app.get("/", tags=["root"])
