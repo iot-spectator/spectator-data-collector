@@ -2,8 +2,6 @@
 
 import contextlib
 import logging
-import os
-import signal
 
 import fastapi
 
@@ -11,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from collector import logger
 from collector.controller import device_manager
+from collector.controller import resource_manager
 
 
 logger.setup_logger(level=logging.DEBUG, console=True)
@@ -38,6 +37,7 @@ app.add_middleware(
 )
 
 app.include_router(device_manager.router)
+app.include_router(resource_manager.router)
 
 
 @app.get("/", tags=["root"])
