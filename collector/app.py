@@ -2,12 +2,15 @@
 
 import contextlib
 import logging
+import os
+import signal
 
 import fastapi
 
 from fastapi.middleware.cors import CORSMiddleware
 
 from collector import logger
+from collector.controller import device_manager
 
 
 logger.setup_logger(level=logging.DEBUG, console=True)
@@ -34,8 +37,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(device_manager.router)
+
 
 @app.get("/", tags=["root"])
 async def read_root() -> dict:
     """Return welcome message for the API root."""
     return {"message": "Welcome to Spectator Data Collector!"}
+
+
+@app.post("/shutdown", tags=["root"])
+async def shutdown() -> None:
+    """Shutdown the device gracefully."""
+    raise NotImplementedError("The method is not implemented!")
