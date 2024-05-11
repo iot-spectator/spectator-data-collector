@@ -1,8 +1,12 @@
+# Copyright © 2024 by IoT Spectator. All rights reserved.
+
 """Log Helper provides the common log configuration and format."""
 
 import pathlib
 import logging
 import logging.handlers
+
+from typing import Optional
 
 # The maximum size of a log file. When a log file is larger than
 # the number, the log will be rotated.
@@ -19,7 +23,9 @@ _console_handler = None
 _file_handler = None
 
 
-def setup_logger(level=None, filename: pathlib.Path = None, console: bool = False):
+def setup_logger(
+    level=None, filename: Optional[pathlib.Path] = None, console: bool = False
+):
     """Configure the logger.
 
     This method should be called in the top level of a Spectator process.

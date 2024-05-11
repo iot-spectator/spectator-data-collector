@@ -58,7 +58,7 @@ async def get_cameras() -> dict:
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.get("/device/svideo/{camera_name}/status", tags=["video"])
+@router.get("/device/video/{camera_name}/status", tags=["video"])
 async def get_camera(camera_name: str) -> dict:
     """Return one camera status."""
     raise NotImplementedError("The method is not implemented!")

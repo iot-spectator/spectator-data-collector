@@ -1,3 +1,5 @@
+# Copyright © 2024 by IoT Spectator. All rights reserved.
+
 """Spectator Data Collector Application."""
 
 import contextlib
