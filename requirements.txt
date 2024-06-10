@@ -2,3 +2,4 @@ datainventory
 iothealth
 fastapi
 uvicorn
+opencv-python
