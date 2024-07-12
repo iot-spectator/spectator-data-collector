@@ -5,6 +5,7 @@
 import fastapi
 
 from iothealth import device_health
+from devices import usb_webcam
 
 
 router = fastapi.APIRouter()
@@ -46,19 +47,32 @@ async def get_info() -> dict:
     }
 
 
-@router.post("/device/video/{camera_name}/stop", tags=["video"])
-async def stop_video(camera_name: str) -> dict:
+@router.post("/device/video/{device_id}/start", tags=["video"])
+async def start_video(device_id: str) -> dict:
+    """Start capturing video."""
+    raise NotImplementedError("The method is not implemented!")
+
+
+@router.post("/device/video/{device_id}/stop", tags=["video"])
+async def stop_video(device_id: str) -> dict:
     """Stop capturing video."""
     raise NotImplementedError("The method is not implemented!")
 
 
 @router.get("/device/video/status", tags=["video"])
-async def get_cameras() -> dict:
-    """Return all the cameras status."""
+async def get_video_status() -> dict:
+    """Return all running video process status."""
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.get("/device/video/{camera_name}/status", tags=["video"])
-async def get_camera(camera_name: str) -> dict:
+@router.get("/device/video/{device_id}/status", tags=["video"])
+async def get_camera(device_id: str) -> dict:
+    """Return a running video process status of a specific."""
+    raise NotImplementedError("The method is not implemented!")
+
+
+@router.post("/device/image/{device_id}", tags=["image"])
+async def take_image(device_id: int, filename: str) -> dict:
     """Return one camera status."""
-    raise NotImplementedError("The method is not implemented!")
+    webcam = usb_webcam.USBWebCam(device_id=int(device_id))
+    webcam.take_image(filename=filename)
