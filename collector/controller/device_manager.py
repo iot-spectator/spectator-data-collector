@@ -47,32 +47,33 @@ async def get_info() -> dict:
     }
 
 
-@router.post("/device/video/{device_id}/start", tags=["video"])
-async def start_video(device_id: str) -> dict:
+@router.post("/device/camera/{camera_id}/video/start", tags=["camera"])
+async def start_video(camera_id: str) -> dict:
     """Start capturing video."""
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.post("/device/video/{device_id}/stop", tags=["video"])
-async def stop_video(device_id: str) -> dict:
+@router.post("/device/camera/{camera_id}/video/stop", tags=["camera"])
+async def stop_video(camera_id: str) -> dict:
     """Stop capturing video."""
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.get("/device/video/status", tags=["video"])
-async def get_video_status() -> dict:
-    """Return all running video process status."""
-    raise NotImplementedError("The method is not implemented!")
-
-
-@router.get("/device/video/{device_id}/status", tags=["video"])
-async def get_camera(device_id: str) -> dict:
+@router.get("/device/camera/{camera_id}/video/status", tags=["camera"])
+async def get_camera(camera_id: str) -> dict:
     """Return a running video process status of a specific."""
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.post("/device/image/{device_id}", tags=["image"])
-async def take_image(device_id: int, filename: str) -> dict:
-    """Return one camera status."""
-    webcam = usb_webcam.USBWebCam(device_id=int(device_id))
+@router.post("/device/camera/{camera_id}/image", tags=["camera"])
+async def take_image(camera_id: int, filename: str) -> dict:
+    """Take one picture."""
+    webcam = usb_webcam.USBWebCam(device_id=int(camera_id))
+    webcam.take_image(filename=filename)
+
+
+@router.post("/device/camera/{camera_id}/images", tags=["camera"])
+async def take_images(camera_id: int, filename: str) -> dict:
+    """Take pictures periodically."""
+    webcam = usb_webcam.USBWebCam(device_id=int(camera_id))
     webcam.take_image(filename=filename)
