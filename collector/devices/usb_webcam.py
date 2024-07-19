@@ -35,16 +35,19 @@ class USBWebCam:
         pass
 
     def take_image(self, filename: str) -> None:
+        """Take one picture."""
         success, image = self._camera.read()
         if success:
             cv2.imwrite(filename=filename, img=image)
             self._camera.release()
 
     def take_images(self, target: pathlib.Path) -> None:
-        pass
+        """Take images periodically."""
+        raise NotImplementedError("The method is not implemented.")
 
-    def stop_images(self) -> None:
-        pass
+    def stop_taking_images(self) -> None:
+        """Stop taking images."""
+        raise NotImplementedError("The method is not implemented.")
 
     def start_video(self, target: pathlib.Path) -> None:
         """Start the camera thread.

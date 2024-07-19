@@ -5,7 +5,8 @@
 import fastapi
 
 from iothealth import device_health
-from devices import usb_webcam
+
+from collector.devices import usb_webcam
 
 
 router = fastapi.APIRouter()
@@ -72,8 +73,13 @@ async def take_image(camera_id: int, filename: str) -> dict:
     webcam.take_image(filename=filename)
 
 
-@router.post("/device/camera/{camera_id}/images", tags=["camera"])
-async def take_images(camera_id: int, filename: str) -> dict:
+@router.post("/device/camera/{camera_id}/images/start", tags=["camera"])
+async def start_taking_images(camera_id: int, filename: str) -> dict:
     """Take pictures periodically."""
-    webcam = usb_webcam.USBWebCam(device_id=int(camera_id))
-    webcam.take_image(filename=filename)
+    raise NotImplementedError("The method is not implemented!")
+
+
+@router.post("/device/camera/{camera_id}/images/stop", tags=["camera"])
+async def stop_taking_images(camera_id: int, filename: str) -> dict:
+    """Take pictures periodically."""
+    raise NotImplementedError("The method is not implemented!")
