@@ -48,6 +48,24 @@ async def get_info() -> dict:
     }
 
 
+@router.get("/device/cameras/status", tags=["camera"])
+async def get_cameras() -> dict:
+    """Return all cameras' status."""
+    raise NotImplementedError("The method is not implemented!")
+
+
+@router.post("/device/cameras/video/start", tags=["camera"])
+async def start_cameras() -> dict:
+    """Start capturing videos on all cameras."""
+    raise NotImplementedError("The method is not implemented!")
+
+
+@router.post("/device/cameras/video/stop", tags=["camera"])
+async def stop_cameras() -> dict:
+    """Stop capturing videos on all cameras."""
+    raise NotImplementedError("The method is not implemented!")
+
+
 @router.post("/device/camera/{camera_id}/video/start", tags=["camera"])
 async def start_video(camera_id: str) -> dict:
     """Start capturing video."""
