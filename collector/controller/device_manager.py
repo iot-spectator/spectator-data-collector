@@ -4,6 +4,8 @@
 
 import fastapi
 
+from typing import Optional
+
 from iothealth import device_health
 
 from collector.devices import usb_webcam
@@ -48,56 +50,38 @@ async def get_info() -> dict:
     }
 
 
-@router.get("/device/cameras/status", tags=["camera"])
-async def get_cameras() -> dict:
-    """Return all cameras' status."""
+@router.get("/device/camera/status", tags=["camera"])
+async def get_camera_status(camera_id: Optional[int] = None) -> dict:
+    """Return camera status. If camera_id is not present, all cameras status
+    will be returned.
+
+    Parameters
+    ----------
+    camera_id: Optional[int]
+        Camera ID.
+    """
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.post("/device/cameras/video/start", tags=["camera"])
-async def start_cameras() -> dict:
-    """Start capturing videos on all cameras."""
+@router.post("/device/camera/video/start", tags=["camera"])
+async def start_capturing_videos(camera_id: Optional[int] = None) -> dict:
+    """Start capturing videos. If camera_id is not present, all cameras will
+    start capturing videos.
+    """
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.post("/device/cameras/video/stop", tags=["camera"])
-async def stop_cameras() -> dict:
-    """Stop capturing videos on all cameras."""
-    raise NotImplementedError("The method is not implemented!")
-
-
-@router.post("/device/camera/{camera_id}/video/start", tags=["camera"])
-async def start_video(camera_id: str) -> dict:
-    """Start capturing video."""
-    raise NotImplementedError("The method is not implemented!")
-
-
-@router.post("/device/camera/{camera_id}/video/stop", tags=["camera"])
-async def stop_video(camera_id: str) -> dict:
-    """Stop capturing video."""
-    raise NotImplementedError("The method is not implemented!")
-
-
-@router.get("/device/camera/{camera_id}/video/status", tags=["camera"])
-async def get_camera(camera_id: str) -> dict:
-    """Return a running video process status of a specific."""
-    raise NotImplementedError("The method is not implemented!")
-
-
-@router.post("/device/camera/{camera_id}/image", tags=["camera"])
-async def take_image(camera_id: int, filename: str) -> dict:
-    """Take one picture."""
+@router.post("/device/camera/image", tags=["camera"])
+async def take_images_on_all_cameras(
+    camera_id: Optional[int] = None, frequency: Optional[int] = None
+) -> dict:
+    """Take pictures."""
     webcam = usb_webcam.USBWebCam(device_id=int(camera_id))
-    webcam.take_image(filename=filename)
+    webcam.take_image(filename="Temp.jpg")
 
 
-@router.post("/device/camera/{camera_id}/images/start", tags=["camera"])
-async def start_taking_images(camera_id: int, filename: str) -> dict:
-    """Take pictures periodically."""
-    raise NotImplementedError("The method is not implemented!")
-
-
-@router.post("/device/camera/{camera_id}/images/stop", tags=["camera"])
-async def stop_taking_images(camera_id: int, filename: str) -> dict:
-    """Take pictures periodically."""
+@router.post("/device/camera/stop", tags=["camera"])
+async def stop_camera_activities(camera_id: Optional[int] = None) -> dict:
+    """Stop camera activities. If camera_id is not present, activities on all
+     cameras will be stopped."""
     raise NotImplementedError("The method is not implemented!")
