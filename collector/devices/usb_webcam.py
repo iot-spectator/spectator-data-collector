@@ -103,4 +103,4 @@ class USBWebCam:
 class USBWebCamManager:
 
     def __init__(self) -> None:
-        pass
+        raise NotImplementedError("This class is not implemented.s")

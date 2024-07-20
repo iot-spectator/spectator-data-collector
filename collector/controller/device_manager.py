@@ -43,7 +43,7 @@ async def get_camera_status(camera_id: Optional[int] = None) -> dict:
 
     Parameters
     ----------
-    camera_id: Optional[int]
+    `camera_id`: `Optional[int]`
         If present, the given camera's status will be return; otherwise,
         return all camera's status. Default `None`.
 
@@ -63,13 +63,13 @@ async def start_capturing_videos(camera_id: Optional[int] = None) -> list[int]:
 
     Parameters
     ----------
-    camera_id: Optional[int]
+    `camera_id`: `Optional[int]`
         If present, only the given camera will start capturing videos; otherwise,
         all available cameras will start capturing videos. Default `None`.
 
     Returns
     -------
-    list[int]
+    `list[int]`
         The list of camera IDs that have started capturing videos successfully.
     """
     raise NotImplementedError("The method is not implemented!")
@@ -83,17 +83,17 @@ async def take_images(
 
     Parameters
     ----------
-    camera_id: Optional[int]
+    `camera_id`: `Optional[int]`
         If present, only the given camera will take image(s); otherwise,
         all available cameras will take images. Default `None`.
 
-    frequency: Optional[int]
+    `frequency`: `Optional[int]`
         The frequency of taking images. Unit: second. If not present,
         only one picture will be taken. Default `None`.
 
     Returns
     -------
-    list[int]
+    `list[int]`
         The list of camera IDs that have started taking images successfully.
     """
     webcam = usb_webcam.USBWebCam(device_id=int(camera_id))
@@ -112,13 +112,13 @@ async def stop_camera_activities(camera_id: Optional[int] = None) -> list[int]:
 
     Parameters
     ----------
-    camera_id: Optional[int]
+    `camera_id`: `Optional[int]`
         If present, only the activities on the given camera will stop; otherwise,
         all activities on all cameras will stop. Default `None`.
 
     Returns
     -------
-    list[int]
+    `list[int]`
         The list of the stopped cameras.
     """
     raise NotImplementedError("The method is not implemented!")
