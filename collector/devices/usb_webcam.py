@@ -2,12 +2,18 @@
 
 """Manage USB WebCams."""
 
-import pathlib
+import enum
 import threading
 
 import cv2
 
+from datetime import datetime
 from typing import Optional
+
+
+class MediaType(enum.StrEnum):
+    Image = enum.auto()
+    Video = enum.auto()
 
 
 class USBWebCam:
@@ -34,14 +40,16 @@ class USBWebCam:
     def __del__(self):
         pass
 
-    def take_image(self, filename: str) -> None:
+    def take_image(self) -> None:
         """Take one picture."""
         success, image = self._camera.read()
         if success:
-            cv2.imwrite(filename=filename, img=image)
+            cv2.imwrite(
+                filename=self._generate_filename(media_type=MediaType.Image), img=image
+            )
             self._camera.release()
 
-    def take_images(self, target: pathlib.Path) -> None:
+    def take_images(self, frequency: int) -> None:
         """Take images periodically."""
         raise NotImplementedError("The method is not implemented.")
 
@@ -49,7 +57,7 @@ class USBWebCam:
         """Stop taking images."""
         raise NotImplementedError("The method is not implemented.")
 
-    def start_video(self, target: pathlib.Path) -> None:
+    def start_video(self) -> None:
         """Start the camera thread.
 
         Start a running thread for the camera in the background.
@@ -57,7 +65,10 @@ class USBWebCam:
         # Might be configurable
         fourcc = cv2.VideoWriter.fourcc(*"XVID")
         self._vid_out = cv2.VideoWriter(
-            str(target), fourcc, self._fps, self._frame_size
+            self._generate_filename(media_type=MediaType.Video),
+            fourcc,
+            self._fps,
+            self._frame_size,
         )
 
         # Setup the thread
@@ -80,6 +91,13 @@ class USBWebCam:
         while self._flag:
             self._ret, self._frame = self._camera.read()
             self._vid_out.write(self._frame)
+
+    def _generate_filename(self, media_type: MediaType) -> str:
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
+        if media_type == MediaType.Image:
+            return f"{self._device_id}-{timestamp}.jpg"
+        elif media_type == MediaType.Video:
+            return f"{self._device_id}-{timestamp}.avi"
 
 
 class USBWebCamManager:
