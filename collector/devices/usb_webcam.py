@@ -37,6 +37,8 @@ class USBWebCam:
         self._thread: Optional[threading.Thread] = None
         self._flag = False
 
+        # TODO: Need lock to protect camera resource.
+
     def __del__(self):
         pass
 
