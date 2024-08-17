@@ -10,6 +10,11 @@ import cv2
 from datetime import datetime
 from typing import Optional
 
+from collector import logger
+
+
+webcam_logger = logger.get_logger(name=__name__)
+
 
 class MediaType(enum.StrEnum):
     Image = enum.auto()
@@ -115,6 +120,21 @@ class USBWebCamManager:
         """Return the list of known camera ID."""
         return [camera_id for camera_id in self._cameras.keys()]
 
-    def get_camera(self, camera_id: int) -> USBWebCam:
-        """Return the USB Webcam object."""
-        return self._cameras[camera_id]
+    def get_camera(self, camera_id: int) -> Optional[USBWebCam]:
+        """Return the USB Webcam object.
+
+        Parameters
+        ----------
+        camera_id: `int`
+            The ID of the camera.
+
+        Returns
+        -------
+        `Optional[USBWebCam]`
+            The USBWebCam object. `None` if it doesn't exist.
+        """
+        try:
+            return self._cameras[camera_id]
+        except KeyError:
+            webcam_logger.warning(f"{camera_id} does not exist.")
+            return None

@@ -8,6 +8,7 @@ from typing import Optional
 
 from iothealth import device_health
 
+from collector import common
 from collector.devices import usb_webcam
 
 
@@ -95,7 +96,10 @@ async def start_taking_images(camera_id: int, frequency: Optional[int] = None) -
         The frequency of taking images. Unit: second. If not present,
         only one picture will be taken. Default `None`.
     """
-    webcam = usb_webcam.USBWebCam(camera_id=int(camera_id))
+    webcam = common.usb_webcam_manager.get_camera(camera_id=camera_id)
+    if not webcam:
+        webcam = usb_webcam.USBWebCam(camera_id=int(camera_id))
+        common.usb_webcam_manager.add_camera(camera=webcam)
 
     if frequency:
         raise NotImplementedError("Taking images periodically is not implemented.")
