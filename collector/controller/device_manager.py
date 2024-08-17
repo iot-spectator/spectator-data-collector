@@ -56,69 +56,60 @@ async def get_camera_status(camera_id: Optional[int] = None) -> dict:
 
 
 @router.post("/device/camera/video/start", tags=["camera"])
-async def start_capturing_videos(camera_id: Optional[int] = None) -> list[int]:
-    """Start capturing videos. If camera_id is not present, all cameras will
-    start capturing videos.
-
+async def start_capturing_videos(camera_id: int, duration: Optional[int] = 5) -> None:
+    """Start capturing videos.
 
     Parameters
     ----------
-    `camera_id`: `Optional[int]`
-        If present, only the given camera will start capturing videos; otherwise,
-        all available cameras will start capturing videos. Default `None`.
+    `camera_id`: `int`
+        The ID of the camera to be started capturing.
 
-    Returns
-    -------
-    `list[int]`
-        The list of camera IDs that have started capturing videos successfully.
+    `duration`: `Optional[int]`
+        The duration of each video in minutes. Default is 5 minutes.
     """
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.post("/device/camera/image", tags=["camera"])
-async def take_images(
-    camera_id: Optional[int] = None, frequency: Optional[int] = None
-) -> list[int]:
+@router.post("/device/camera/video/stop", tags=["camera"])
+async def stop_capturing_videos(camera_id: int) -> None:
+    """Stop capturing videos.
+
+    Parameters
+    ----------
+    `camera_id`: `int`
+        The ID of the camera to be stopped.
+    """
+    raise NotImplementedError("The method is not implemented!")
+
+
+@router.post("/device/camera/image/start", tags=["camera"])
+async def start_taking_images(camera_id: int, frequency: Optional[int] = None) -> None:
     """Take pictures.
 
     Parameters
     ----------
-    `camera_id`: `Optional[int]`
-        If present, only the given camera will take image(s); otherwise,
-        all available cameras will take images. Default `None`.
+    `camera_id`: `int`
+        The ID of the camera to take a image.s
 
     `frequency`: `Optional[int]`
         The frequency of taking images. Unit: second. If not present,
         only one picture will be taken. Default `None`.
-
-    Returns
-    -------
-    `list[int]`
-        The list of camera IDs that have started taking images successfully.
     """
     webcam = usb_webcam.USBWebCam(device_id=int(camera_id))
 
     if frequency:
         raise NotImplementedError("Taking images periodically is not implemented.")
     else:
-        if camera_id:
-            webcam.take_image()
+        webcam.take_image()
 
 
-@router.post("/device/camera/stop", tags=["camera"])
-async def stop_camera_activities(camera_id: Optional[int] = None) -> list[int]:
-    """Stop camera activities. If camera_id is not present, activities on all
-    cameras will be stopped.
+@router.post("/device/camera/image/stop", tags=["camera"])
+async def stop_taking_images(camera_id: int) -> None:
+    """Stop taking images.
 
     Parameters
     ----------
-    `camera_id`: `Optional[int]`
-        If present, only the activities on the given camera will stop; otherwise,
-        all activities on all cameras will stop. Default `None`.
-
-    Returns
-    -------
-    `list[int]`
-        The list of the stopped cameras.
+    `camera_id`: `int`
+        The ID of the camera to be stopped.
     """
     raise NotImplementedError("The method is not implemented!")
