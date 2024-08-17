@@ -19,10 +19,10 @@ class MediaType(enum.StrEnum):
 class USBWebCam:
     """USB WebCam to capture images or videos."""
 
-    def __init__(self, device_id: int):
+    def __init__(self, camera_id: int):
         # Initialize the Webcam instance
-        self._device_id = device_id
-        self._camera = cv2.VideoCapture(self._device_id)
+        self.ID = camera_id
+        self._camera = cv2.VideoCapture(self.ID)
 
         self._ret, self._frame = self._camera.read()
 
@@ -75,7 +75,7 @@ class USBWebCam:
 
         # Setup the thread
         self._thread = threading.Thread(
-            target=self._capture, name=f"{USBWebCam.__name__}-{self._device_id}"
+            target=self._capture, name=f"{USBWebCam.__name__}-{self.ID}"
         )
         self._flag = True
         self._thread.start()
@@ -97,12 +97,24 @@ class USBWebCam:
     def _generate_filename(self, media_type: MediaType) -> str:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
         if media_type == MediaType.Image:
-            return f"{self._device_id}-{timestamp}.jpg"
+            return f"{self.ID}-{timestamp}.jpg"
         elif media_type == MediaType.Video:
-            return f"{self._device_id}-{timestamp}.avi"
+            return f"{self.ID}-{timestamp}.avi"
 
 
 class USBWebCamManager:
 
     def __init__(self) -> None:
-        raise NotImplementedError("This class is not implemented.s")
+        self._cameras = {}
+
+    def add_camera(self, camera: USBWebCam) -> None:
+        """Add a camera."""
+        self._cameras[camera.ID] = camera
+
+    def list_cameras(self) -> list[int]:
+        """Return the list of known camera ID."""
+        return [camera_id for camera_id in self._cameras.keys()]
+
+    def get_camera(self, camera_id: int) -> USBWebCam:
+        """Return the USB Webcam object."""
+        return self._cameras[camera_id]

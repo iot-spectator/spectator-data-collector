@@ -95,7 +95,7 @@ async def start_taking_images(camera_id: int, frequency: Optional[int] = None) -
         The frequency of taking images. Unit: second. If not present,
         only one picture will be taken. Default `None`.
     """
-    webcam = usb_webcam.USBWebCam(device_id=int(camera_id))
+    webcam = usb_webcam.USBWebCam(camera_id=int(camera_id))
 
     if frequency:
         raise NotImplementedError("Taking images periodically is not implemented.")
