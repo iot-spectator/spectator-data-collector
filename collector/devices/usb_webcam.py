@@ -58,7 +58,10 @@ class USBWebCam:
 
     def take_images(self, frequency: int) -> None:
         """Take images periodically."""
-        raise NotImplementedError("The method is not implemented.")
+        self._thread = threading.Thread(
+            target=self.take_image, name=f"{USBWebCam.__name__}-{self.ID}"
+        )
+        self._flag = True
 
     def stop_taking_images(self) -> None:
         """Stop taking images."""
