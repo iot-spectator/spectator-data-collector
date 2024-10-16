@@ -63,6 +63,8 @@ class USBWebCam:
         )
         self._flag = True
 
+        
+
     def stop_taking_images(self) -> None:
         """Stop taking images."""
         raise NotImplementedError("The method is not implemented.")
