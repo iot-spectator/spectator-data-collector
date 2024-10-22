@@ -4,6 +4,7 @@
 
 import enum
 import threading
+import time
 
 import cv2
 
@@ -45,7 +46,7 @@ class USBWebCam:
         # TODO: Need lock to protect camera resource.
 
     def __del__(self):
-        pass
+        self._camera.release()
 
     def take_image(self) -> None:
         """Take one picture."""
@@ -56,18 +57,24 @@ class USBWebCam:
             )
             self._camera.release()
 
+    def _take_images(self, frequency: int) -> None:
+
+        while self._flag is True:
+            self.take_image()
+            time.sleep(seconds=frequency)
+
     def take_images(self, frequency: int) -> None:
         """Take images periodically."""
         self._thread = threading.Thread(
-            target=self.take_image, name=f"{USBWebCam.__name__}-{self.ID}"
+            target=self._take_images,
+            name=f"{USBWebCam.__name__}-{self.ID}",
+            args=(frequency),
         )
         self._flag = True
 
-        
-
     def stop_taking_images(self) -> None:
         """Stop taking images."""
-        raise NotImplementedError("The method is not implemented.")
+        self._flag = False
 
     def start_video(self) -> None:
         """Start the camera thread.
