@@ -1,22 +1,11 @@
-import threading
 import time
 
-flag = True
+from collector.devices import usb_webcam
 
-def print_numbers():
-    while flag is True:
-        print(1)
-        time.sleep(1)
+usb = usb_webcam.USBWebCam(camera_id=0)
 
-# Create two threads
-thread1 = threading.Thread(target=print_numbers)
+usb.take_images(frequency=3)
 
-# Start the threads
-thread1.start()
+time.sleep(20)
 
-flag = False
-
-# Wait for both threads to complete
-thread1.join()
-
-print("Both threads have finished execution.")
+usb.stop_taking_images()

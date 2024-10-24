@@ -28,6 +28,7 @@ class USBWebCam:
     def __init__(self, camera_id: int):
         # Initialize the Webcam instance
         self.ID = camera_id
+
         self._camera = cv2.VideoCapture(self.ID)
 
         self._ret, self._frame = self._camera.read()
@@ -58,23 +59,25 @@ class USBWebCam:
             self._camera.release()
 
     def _take_images(self, frequency: int) -> None:
-
         while self._flag is True:
             self.take_image()
-            time.sleep(seconds=frequency)
+            time.sleep(frequency)
 
     def take_images(self, frequency: int) -> None:
         """Take images periodically."""
         self._thread = threading.Thread(
             target=self._take_images,
             name=f"{USBWebCam.__name__}-{self.ID}",
-            args=(frequency),
+            args=(frequency,),
         )
         self._flag = True
+        self._thread.start()
 
     def stop_taking_images(self) -> None:
         """Stop taking images."""
         self._flag = False
+        if self._thread:
+            self._thread.join()
 
     def start_video(self) -> None:
         """Start the camera thread.
