@@ -24,4 +24,4 @@ usb_manager.add_camera(camera=usb)
 
 print(usb_manager.list_cameras())
 
-print(usb_manager.get_camera(camera_id=2))
+print(usb_manager.get_camera(camera_id=0))

@@ -102,7 +102,7 @@ async def start_taking_images(camera_id: int, frequency: Optional[int] = None) -
         common.usb_webcam_manager.add_camera(camera=webcam)
 
     if frequency:
-        raise NotImplementedError("Taking images periodically is not implemented.")
+        webcam.take_images(frequency=frequency)
     else:
         webcam.take_image()
 
@@ -115,5 +115,11 @@ async def stop_taking_images(camera_id: int) -> None:
     ----------
     `camera_id`: `int`
         The ID of the camera to be stopped.
+
+    Note
+    ----
+    If the camera does not exist, the function will exit successfully.
     """
-    raise NotImplementedError("The method is not implemented!")
+    webcam = common.usb_webcam_manager.get_camera(camera_id=camera_id)
+    if webcam:
+        webcam.stop_taking_images()
