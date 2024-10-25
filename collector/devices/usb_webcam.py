@@ -14,9 +14,6 @@ from typing import Optional
 from collector import logger
 
 
-webcam_logger = logger.get_logger(name=__name__)
-
-
 class MediaType(enum.StrEnum):
     Image = enum.auto()
     Video = enum.auto()
@@ -26,6 +23,7 @@ class USBWebCam:
     """USB WebCam to capture images or videos."""
 
     def __init__(self, camera_id: int):
+        self._logger = logger.get_logger(name=__name__)
         # Initialize the Webcam instance
         self.ID = camera_id
 
@@ -38,7 +36,7 @@ class USBWebCam:
             int(self._camera.get(cv2.CAP_PROP_FRAME_HEIGHT)),
         )
         self._fps = self._camera.get(cv2.CAP_PROP_FPS)
-        self._vid_out = None
+        self._vid_out: Optional[cv2.VideoWriter] = None
 
         # Initialize the capture thread
         self._thread: Optional[threading.Thread] = None
@@ -56,7 +54,6 @@ class USBWebCam:
             cv2.imwrite(
                 filename=self._generate_filename(media_type=MediaType.Image), img=image
             )
-            self._camera.release()
 
     def _take_images(self, frequency: int) -> None:
         while self._flag is True:
@@ -112,7 +109,8 @@ class USBWebCam:
         """Run the camera thread."""
         while self._flag:
             self._ret, self._frame = self._camera.read()
-            self._vid_out.write(self._frame)
+            if self._vid_out:
+                self._vid_out.write(self._frame)
 
     def _generate_filename(self, media_type: MediaType) -> str:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
@@ -125,7 +123,8 @@ class USBWebCam:
 class USBWebCamManager:
 
     def __init__(self) -> None:
-        self._cameras = {}
+        self._logger = logger.get_logger(name=__name__)
+        self._cameras: dict[int, USBWebCam] = {}
 
     def add_camera(self, camera: USBWebCam) -> None:
         """Add a camera."""
@@ -151,5 +150,5 @@ class USBWebCamManager:
         try:
             return self._cameras[camera_id]
         except KeyError:
-            webcam_logger.warning(f"{camera_id} does not exist.")
+            self._logger.warning(f"{camera_id} does not exist.")
             return None
