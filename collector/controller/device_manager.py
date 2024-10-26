@@ -39,8 +39,7 @@ async def get_status() -> dict:
 
 @router.get("/device/camera/status", tags=["camera"])
 async def get_camera_status(camera_id: Optional[int] = None) -> dict:
-    """Return camera status. If camera_id is present, only the given camera's status
-    will be returned.
+    """Return camera status.
 
     Parameters
     ----------
@@ -52,6 +51,11 @@ async def get_camera_status(camera_id: Optional[int] = None) -> dict:
     -------
     `dict`
         A JSON object contains the camera status.
+
+    Note
+    ----
+    If camera_id is present, only the given camera's status
+    will be returned.
     """
     raise NotImplementedError("The method is not implemented!")
 

@@ -15,6 +15,8 @@ from collector import logger
 
 
 class MediaType(enum.StrEnum):
+    """Supported media types."""
+
     Image = enum.auto()
     Video = enum.auto()
 
@@ -45,6 +47,7 @@ class USBWebCam:
         # TODO: Need lock to protect camera resource.
 
     def __del__(self):
+        """Resource cleanup."""
         self._camera.release()
 
     def take_image(self) -> None:
@@ -121,6 +124,7 @@ class USBWebCam:
 
 
 class USBWebCamManager:
+    """Manage all available USB webcams."""
 
     def __init__(self) -> None:
         self._logger = logger.get_logger(name=__name__)

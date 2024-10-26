@@ -68,11 +68,9 @@ def get_logger(name: str, level=None) -> logging.Logger:
     level:
         Set the log level for the specific logger.
     """
-
     # FIXME: The check does not work.
     # if _console_handler is None and _file_handler is None:
     #    raise RuntimeError(f"{name} is not initialized!")
-
     logger = logging.getLogger(name)
     if level:
         logger.setLevel(level)
