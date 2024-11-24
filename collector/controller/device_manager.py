@@ -4,7 +4,12 @@
 
 import fastapi
 
+from typing import Optional
+
 from iothealth import device_health
+
+from collector import common
+from collector.devices import usb_webcam
 
 
 router = fastapi.APIRouter()
@@ -12,7 +17,7 @@ router = fastapi.APIRouter()
 
 @router.get("/device/status", tags=["device"])
 async def get_status() -> dict:
-    """GET /device/status.
+    """Return the device status and system information.
 
     Returns
     -------
@@ -25,20 +30,6 @@ async def get_status() -> dict:
         "memory": device.memory(),
         "disk": device.capacity(),
         "temperature": device.temperature(),
-    }
-
-
-@router.get("/device/info", tags=["device"])
-async def get_info() -> dict:
-    """GET /device/info.
-
-    Returns
-    -------
-    `dict`
-        A JSON object contains the device's system information.
-    """
-    device = device_health.DeviceHealth()
-    return {
         "platform": device.device_platform(),
         "architecture": device.processor_architecture(),
         "os": device.operating_system(),
@@ -46,19 +37,93 @@ async def get_info() -> dict:
     }
 
 
-@router.post("/device/video/{camera_name}/stop", tags=["video"])
-async def stop_video(camera_name: str) -> dict:
-    """Stop capturing video."""
+@router.get("/device/camera/status", tags=["camera"])
+async def get_camera_status(camera_id: Optional[int] = None) -> dict:
+    """Return camera status.
+
+    Parameters
+    ----------
+    `camera_id`: `Optional[int]`
+        If present, the given camera's status will be return; otherwise,
+        return all camera's status. Default `None`.
+
+    Returns
+    -------
+    `dict`
+        A JSON object contains the camera status.
+
+    Note
+    ----
+    If camera_id is present, only the given camera's status
+    will be returned.
+    """
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.get("/device/video/status", tags=["video"])
-async def get_cameras() -> dict:
-    """Return all the cameras status."""
+@router.post("/device/camera/video/start", tags=["camera"])
+async def start_capturing_videos(camera_id: int, duration: Optional[int] = 5) -> None:
+    """Start capturing videos.
+
+    Parameters
+    ----------
+    `camera_id`: `int`
+        The ID of the camera to be started capturing.
+
+    `duration`: `Optional[int]`
+        The duration of each video in minutes. Default is 5 minutes.
+    """
     raise NotImplementedError("The method is not implemented!")
 
 
-@router.get("/device/video/{camera_name}/status", tags=["video"])
-async def get_camera(camera_name: str) -> dict:
-    """Return one camera status."""
+@router.post("/device/camera/video/stop", tags=["camera"])
+async def stop_capturing_videos(camera_id: int) -> None:
+    """Stop capturing videos.
+
+    Parameters
+    ----------
+    `camera_id`: `int`
+        The ID of the camera to be stopped.
+    """
     raise NotImplementedError("The method is not implemented!")
+
+
+@router.post("/device/camera/image/start", tags=["camera"])
+async def start_taking_images(camera_id: int, frequency: Optional[int] = None) -> None:
+    """Take pictures.
+
+    Parameters
+    ----------
+    `camera_id`: `int`
+        The ID of the camera to take a image.s
+
+    `frequency`: `Optional[int]`
+        The frequency of taking images. Unit: second. If not present,
+        only one picture will be taken. Default `None`.
+    """
+    webcam = common.usb_webcam_manager.get_camera(camera_id=camera_id)
+    if not webcam:
+        webcam = usb_webcam.USBWebCam(camera_id=int(camera_id))
+        common.usb_webcam_manager.add_camera(camera=webcam)
+
+    if frequency:
+        webcam.take_images(frequency=frequency)
+    else:
+        webcam.take_image()
+
+
+@router.post("/device/camera/image/stop", tags=["camera"])
+async def stop_taking_images(camera_id: int) -> None:
+    """Stop taking images.
+
+    Parameters
+    ----------
+    `camera_id`: `int`
+        The ID of the camera to be stopped.
+
+    Note
+    ----
+    If the camera does not exist, the function will exit successfully.
+    """
+    webcam = common.usb_webcam_manager.get_camera(camera_id=camera_id)
+    if webcam:
+        webcam.stop_taking_images()
