@@ -1,0 +1,26 @@
+"""Local on-device enricher stub."""
+
+import logging
+import pathlib
+
+from typing import override
+
+from spectatordb.models import MediaType
+
+from collector.enrichment.base import Enricher, EnrichmentResult
+
+
+logger = logging.getLogger(__name__)
+
+
+class LocalEnricher(Enricher):
+    """On-device enricher using a local model.
+
+    This is a stub awaiting a chosen model backend (e.g. CLIP for
+    embeddings, a small VLM for descriptions).
+    """
+
+    @override
+    def enrich(self, file: pathlib.Path, media_type: MediaType) -> EnrichmentResult:
+        logger.warning("LocalEnricher is a stub; returning empty result.")
+        return EnrichmentResult()
