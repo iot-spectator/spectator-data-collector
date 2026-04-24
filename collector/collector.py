@@ -16,6 +16,7 @@ from collector.capture.task import CaptureTask
 from collector.config import CollectorConfig
 from collector.enrichment.base import Enricher
 from collector.enrichment.local import LocalEnricher
+from collector.mcp import create_mcp_server
 from collector.rest import create_app
 from collector.service import SpectatorService
 
@@ -70,17 +71,38 @@ class SpectatorDataCollector:
         monitor.start()
         pipeline_task = asyncio.create_task(pipeline.run())
 
-        server_config = uvicorn.Config(
+        rest_config = uvicorn.Config(
             app=app,
             host=self._config.server.host,
             port=self._config.server.port,
             log_level="info",
         )
-        server = uvicorn.Server(server_config)
+        rest_server = uvicorn.Server(rest_config)
+
+        servers: list[asyncio.Task] = [
+            asyncio.create_task(rest_server.serve()),
+        ]
+
+        if self._config.mcp.enabled:
+            mcp = create_mcp_server(service)
+            mcp_app = mcp.sse_app()
+            mcp_config = uvicorn.Config(
+                app=mcp_app,
+                host=self._config.mcp.host,
+                port=self._config.mcp.port,
+                log_level="info",
+            )
+            mcp_server = uvicorn.Server(mcp_config)
+            servers.append(asyncio.create_task(mcp_server.serve()))
+            logger.info(
+                "MCP server enabled on %s:%d",
+                self._config.mcp.host,
+                self._config.mcp.port,
+            )
 
         logger.info("SpectatorDataCollector starting...")
         try:
-            await server.serve()
+            await asyncio.gather(*servers)
         finally:
             logger.info("Shutting down...")
             monitor.stop()

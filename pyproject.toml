@@ -17,6 +17,7 @@ dependencies = [
     "uvicorn",
     "opencv-python",
     "numpy",
+    "mcp",
 ]
 
 [tool.setuptools.packages.find]

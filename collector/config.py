@@ -47,6 +47,15 @@ class ServerConfig:
 
 
 @dataclass
+class MCPConfig:
+    """MCP server configuration."""
+
+    enabled: bool = True
+    host: str = "0.0.0.0"
+    port: int = 13723
+
+
+@dataclass
 class EnrichmentConfig:
     """Enrichment configuration."""
 
@@ -62,6 +71,7 @@ class CollectorConfig:
     capture: CaptureConfig = field(default_factory=CaptureConfig)
     storage: StorageConfig = field(default_factory=StorageConfig)
     server: ServerConfig = field(default_factory=ServerConfig)
+    mcp: MCPConfig = field(default_factory=MCPConfig)
     enrichment: EnrichmentConfig = field(default_factory=EnrichmentConfig)
 
 
@@ -91,6 +101,7 @@ def load_config(path: pathlib.Path | None = None) -> CollectorConfig:
         "capture": (config.capture, CaptureConfig),
         "storage": (config.storage, StorageConfig),
         "server": (config.server, ServerConfig),
+        "mcp": (config.mcp, MCPConfig),
         "enrichment": (config.enrichment, EnrichmentConfig),
     }
 
