@@ -6,11 +6,19 @@ authors = [
     {name="Cipherman", email="cipherman@gmail.com"},
     {name="RicardoRisotto", email="temp@email.com"}
 ]
-description = "The Spectator Data Collector is the core building block that can collect various types of data, especially videos and images."
+description = "IoT Spectator data collector — captures images and video on motion detection from a connected webcam."
 readme = {file = "README.rst", content-type = "text/x-rst"}
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 
-dependencies = []
+dependencies = [
+    "spectator-db",
+    "iothealth",
+    "fastapi",
+    "uvicorn",
+    "opencv-python",
+    "numpy",
+    "mcp",
+]
 
 [tool.setuptools.packages.find]
 exclude = ["tests"]

@@ -1,5 +1,7 @@
-datainventory
+spectator-db
 iothealth
 fastapi
 uvicorn
 opencv-python
+numpy
+mcp

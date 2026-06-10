@@ -3,9 +3,10 @@ flake8
 mypy
 pydocstyle
 pytest
+pytest-asyncio
 pytest-cov
+httpx
 sphinx
-
 
 # Install all the dependencies of the release version
 -r requirements.txt
