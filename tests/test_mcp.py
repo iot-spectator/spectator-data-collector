@@ -1,7 +1,5 @@
 """Tests for collector.mcp."""
 
-import dataclasses
-
 from datetime import datetime, timezone
 from unittest.mock import MagicMock
 

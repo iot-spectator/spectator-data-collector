@@ -60,7 +60,7 @@ def create_app(service: SpectatorService) -> fastapi.FastAPI:
     ) -> list[dict]:
         mt = MediaType(media_type) if media_type else None
         label_list = (
-            [l.strip() for l in labels.split(",") if l.strip()] if labels else None
+            [lbl.strip() for lbl in labels.split(",") if lbl.strip()] if labels else None
         )
         records = service.query_media(
             start=start,
