@@ -20,7 +20,6 @@ from collector.mcp import create_mcp_server
 from collector.rest import create_app
 from collector.service import SpectatorService
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -36,9 +35,7 @@ class SpectatorDataCollector:
     def __init__(self, config: CollectorConfig | None = None) -> None:
         self._config = config or CollectorConfig()
 
-        storage = LocalStorage(
-            storage_dir=pathlib.Path(self._config.storage.media_dir)
-        )
+        storage = LocalStorage(storage_dir=pathlib.Path(self._config.storage.media_dir))
         metadata_store = SQLiteMetadataStore(
             db_path=pathlib.Path(self._config.storage.db_path)
         )
@@ -54,18 +51,14 @@ class SpectatorDataCollector:
         """Start the collector: camera, pipeline, and REST server."""
         loop = asyncio.get_running_loop()
 
-        monitor = CameraMonitor(
-            config=self._config, queue=self._queue, loop=loop
-        )
+        monitor = CameraMonitor(config=self._config, queue=self._queue, loop=loop)
         pipeline = CapturePipeline(
             queue=self._queue,
             db=self._db,
             config=self._config,
             enricher=self._enricher,
         )
-        service = SpectatorService(
-            db=self._db, monitor=monitor, config=self._config
-        )
+        service = SpectatorService(db=self._db, monitor=monitor, config=self._config)
         app = create_app(service)
 
         monitor.start()

@@ -9,7 +9,6 @@ from spectatordb.models import MediaType
 
 from collector.enrichment.base import Enricher, EnrichmentResult
 
-
 logger = logging.getLogger(__name__)
 
 

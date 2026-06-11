@@ -12,7 +12,6 @@ from collector.capture.task import CaptureTask
 from collector.config import CollectorConfig
 from collector.enrichment.base import Enricher
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -78,7 +77,11 @@ class CapturePipeline:
         tmp_dir: pathlib.Path,
         loop: asyncio.AbstractEventLoop,
     ) -> None:
-        recorder = self._image_recorder if task.media_type == MediaType.IMAGE else self._video_recorder
+        recorder = (
+            self._image_recorder
+            if task.media_type == MediaType.IMAGE
+            else self._video_recorder
+        )
         file_path = await loop.run_in_executor(None, recorder.record, task, tmp_dir)
         logger.info("Recorded %s to %s", task.media_type.value, file_path)
 
@@ -92,7 +95,9 @@ class CapturePipeline:
                 device_id=self._config.device.device_id,
             ),
         )
-        logger.info("Stored record %s for %s capture.", record_id, task.media_type.value)
+        logger.info(
+            "Stored record %s for %s capture.", record_id, task.media_type.value
+        )
 
         if self._enricher is not None:
             try:
@@ -108,13 +113,16 @@ class CapturePipeline:
                         labels=result.labels,
                         description=result.description,
                         embedding=embedding if embedding is not None else UNSET,
-                        embedding_model=embedding_model if embedding_model is not None else UNSET,
+                        embedding_model=(
+                            embedding_model if embedding_model is not None else UNSET
+                        ),
                     ),
                 )
                 logger.info("Enriched record %s.", record_id)
             except Exception:
                 logger.exception(
-                    "Enrichment failed for record %s; stored without enrichment.", record_id
+                    "Enrichment failed for record %s; stored without enrichment.",
+                    record_id,
                 )
 
         file_path.unlink(missing_ok=True)

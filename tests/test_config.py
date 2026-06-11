@@ -28,8 +28,7 @@ def test_load_config_none():
 
 def test_load_config_from_toml(tmp_path):
     toml_file = tmp_path / "test.toml"
-    toml_file.write_text(
-        """
+    toml_file.write_text("""
 [device]
 camera_index = 2
 device_id = "pi-03"
@@ -43,8 +42,7 @@ video_duration = 15.0
 
 [server]
 port = 9999
-"""
-    )
+""")
     config = load_config(toml_file)
     assert config.device.camera_index == 2
     assert config.device.device_id == "pi-03"
@@ -60,12 +58,10 @@ port = 9999
 
 def test_load_config_partial_override(tmp_path):
     toml_file = tmp_path / "partial.toml"
-    toml_file.write_text(
-        """
+    toml_file.write_text("""
 [server]
 port = 8080
-"""
-    )
+""")
     config = load_config(toml_file)
     assert config.server.port == 8080
     assert config.server.host == "0.0.0.0"

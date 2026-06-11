@@ -12,7 +12,9 @@ def main() -> None:
     """Entry point."""
     parser = argparse.ArgumentParser(description="Spectator Data Collector")
     parser.add_argument(
-        "--config", type=pathlib.Path, default=None,
+        "--config",
+        type=pathlib.Path,
+        default=None,
         help="Path to TOML configuration file.",
     )
     args = parser.parse_args()
