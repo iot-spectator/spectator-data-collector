@@ -8,6 +8,7 @@ import time
 from datetime import datetime, timezone
 
 import cv2
+import numpy
 
 from spectatordb.models import MediaType
 
@@ -112,7 +113,7 @@ class CameraMonitor:
             logger.info("Camera released.")
 
     def _collect_video(
-        self, cap: cv2.VideoCapture, trigger_frame: object, fps: float
+        self, cap: cv2.VideoCapture, trigger_frame: numpy.ndarray, fps: float
     ) -> CaptureTask:
         duration = self._config.capture.video_duration
         max_frames = int(fps * duration)
