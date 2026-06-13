@@ -15,6 +15,7 @@ class EnrichmentResult:
     labels: list[str] = field(default_factory=list)
     description: str | None = None
     embedding: list[float] | None = None
+    embedding_model: str | None = None
 
 
 class Enricher(abc.ABC):

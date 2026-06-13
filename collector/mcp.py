@@ -18,7 +18,6 @@ from spectatordb.models import MediaType
 
 from collector.service import SpectatorService
 
-
 logger = logging.getLogger(__name__)
 
 

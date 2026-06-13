@@ -8,13 +8,13 @@ import time
 from datetime import datetime, timezone
 
 import cv2
+import numpy
 
 from spectatordb.models import MediaType
 
 from collector.camera.motion import MotionDetector
 from collector.capture.task import CaptureTask
 from collector.config import CollectorConfig
-
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,10 @@ class CameraMonitor:
                     time.sleep(0.1)
                     continue
 
-                triggered = self._capture_requested.is_set() or self._motion_detector.detect(frame)
+                triggered = (
+                    self._capture_requested.is_set()
+                    or self._motion_detector.detect(frame)
+                )
                 if not triggered:
                     continue
 
@@ -103,16 +106,14 @@ class CameraMonitor:
                         media_type=MediaType.IMAGE,
                     )
 
-                asyncio.run_coroutine_threadsafe(
-                    self._queue.put(task), self._loop
-                )
+                asyncio.run_coroutine_threadsafe(self._queue.put(task), self._loop)
                 logger.info("Enqueued %s capture task.", task.media_type.value)
         finally:
             cap.release()
             logger.info("Camera released.")
 
     def _collect_video(
-        self, cap: cv2.VideoCapture, trigger_frame: object, fps: float
+        self, cap: cv2.VideoCapture, trigger_frame: numpy.ndarray, fps: float
     ) -> CaptureTask:
         duration = self._config.capture.video_duration
         max_frames = int(fps * duration)

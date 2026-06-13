@@ -60,8 +60,7 @@ async def test_pipeline_processes_video_task(db, config):
     pipeline = CapturePipeline(queue=queue, db=db, config=config)
 
     frames = [
-        numpy.random.randint(0, 255, (480, 640, 3), dtype=numpy.uint8)
-        for _ in range(5)
+        numpy.random.randint(0, 255, (480, 640, 3), dtype=numpy.uint8) for _ in range(5)
     ]
     task = CaptureTask(
         frames=frames,

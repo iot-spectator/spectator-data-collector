@@ -22,8 +22,13 @@ def test_query_media_delegates(tmp_path):
     db.query.return_value = []
     result = service.query_media(limit=10)
     db.query.assert_called_once_with(
-        start=None, end=None, media_type=None,
-        device_id=None, labels=None, limit=10, offset=None,
+        start=None,
+        end=None,
+        media_type=None,
+        device_id=None,
+        labels=None,
+        limit=10,
+        offset=None,
     )
     assert result == []
 

@@ -14,7 +14,6 @@ from spectatordb.models import MediaType
 
 from collector.service import SpectatorService
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -60,7 +59,11 @@ def create_app(service: SpectatorService) -> fastapi.FastAPI:
         offset: int = 0,
     ) -> list[dict]:
         mt = MediaType(media_type) if media_type else None
-        label_list = [l.strip() for l in labels.split(",") if l.strip()] if labels else None
+        label_list = (
+            [lbl.strip() for lbl in labels.split(",") if lbl.strip()]
+            if labels
+            else None
+        )
         records = service.query_media(
             start=start,
             end=end,

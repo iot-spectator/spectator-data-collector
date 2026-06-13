@@ -9,7 +9,6 @@ from spectatordb.models import MediaType
 
 from collector.enrichment.base import Enricher, EnrichmentResult
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -22,5 +21,6 @@ class LocalEnricher(Enricher):
 
     @override
     def enrich(self, file: pathlib.Path, media_type: MediaType) -> EnrichmentResult:
+        """Return an empty result; stub pending a real model backend."""
         logger.warning("LocalEnricher is a stub; returning empty result.")
         return EnrichmentResult()
