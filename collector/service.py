@@ -3,6 +3,7 @@
 import pathlib
 
 from datetime import datetime
+from typing import cast
 
 from iothealth.device_health import DeviceHealth
 
@@ -48,14 +49,17 @@ class SpectatorService:
         offset: int | None = None,
     ) -> list[MediaRecord]:
         """Query media records with composable filters."""
-        return self._db.query(
-            start=start,
-            end=end,
-            media_type=media_type,
-            device_id=device_id,
-            labels=labels,
-            limit=limit,
-            offset=offset,
+        return cast(
+            list[MediaRecord],
+            self._db.query(
+                start=start,
+                end=end,
+                media_type=media_type,
+                device_id=device_id,
+                labels=labels,
+                limit=limit,
+                offset=offset,
+            ),
         )
 
     def get_record(self, id: str) -> MediaRecord:
@@ -80,7 +84,7 @@ class SpectatorService:
     def device_status(self) -> dict:
         """Read device health information."""
         device = DeviceHealth()
-        return device.summary()
+        return cast(dict, device.summary())
 
     def capture_now(self) -> dict:
         """Trigger an immediate capture."""
