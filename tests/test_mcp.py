@@ -7,6 +7,7 @@ import pytest
 
 from spectatordb.models import MediaRecord, MediaType
 
+from collector.camera.monitor import CameraUnavailableError
 from collector.mcp import create_mcp_server
 
 
@@ -99,6 +100,17 @@ async def test_capture_now_tool():
     result = await mcp.call_tool("capture_now", {})
     service.capture_now.assert_called_once()
     assert len(result) > 0
+
+
+@pytest.mark.asyncio
+async def test_capture_now_tool_errors_when_camera_unavailable():
+    mcp, service = _make_mcp()
+    service.capture_now.side_effect = CameraUnavailableError(
+        "Camera 0 is failed: Cannot open camera 0"
+    )
+
+    with pytest.raises(Exception, match="Cannot open camera 0"):
+        await mcp.call_tool("capture_now", {})
 
 
 @pytest.mark.asyncio

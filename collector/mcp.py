@@ -87,7 +87,8 @@ def create_mcp_server(service: SpectatorService) -> FastMCP:
         description=(
             "Get the current health status of the IoT device, "
             "including CPU usage, memory, disk capacity, temperature, "
-            "and connected cameras."
+            "and connected cameras. The 'camera' field reports whether the "
+            "capture monitor is running and, if not, why it failed."
         ),
     )
     def device_status() -> dict:
@@ -95,7 +96,11 @@ def create_mcp_server(service: SpectatorService) -> FastMCP:
 
     @mcp.tool(
         name="capture_now",
-        description="Trigger an immediate image or video capture from the camera.",
+        description=(
+            "Trigger an immediate image or video capture from the camera. "
+            "Fails with an error if the camera is unavailable; call "
+            "device_status to see why."
+        ),
     )
     def capture_now() -> dict:
         return service.capture_now()
