@@ -51,17 +51,14 @@ class SpectatorService:
         offset: int | None = None,
     ) -> list[MediaRecord]:
         """Query media records with composable filters."""
-        return cast(
-            list[MediaRecord],
-            self._db.query(
-                start=start,
-                end=end,
-                media_type=media_type,
-                device_id=device_id,
-                labels=labels,
-                limit=limit,
-                offset=offset,
-            ),
+        return self._db.query(
+            start=start,
+            end=end,
+            media_type=media_type,
+            device_id=device_id,
+            labels=labels,
+            limit=limit,
+            offset=offset,
         )
 
     def get_record(self, id: str) -> MediaRecord:
