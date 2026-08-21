@@ -4,4 +4,4 @@ fastapi
 uvicorn
 opencv-python
 numpy
-mcp
+mcp<2

@@ -8,7 +8,7 @@ authors = [
 ]
 description = "IoT Spectator data collector — captures images and video on motion detection from a connected webcam."
 readme = {file = "README.rst", content-type = "text/x-rst"}
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 
 dependencies = [
     "spectator-db",
@@ -17,7 +17,9 @@ dependencies = [
     "uvicorn",
     "opencv-python",
     "numpy",
-    "mcp",
+    # 2.0 renamed mcp.server.fastmcp -> mcp.server.mcpserver; collector/mcp.py
+    # still targets the 1.x FastMCP API.
+    "mcp<2",
 ]
 
 [tool.setuptools.packages.find]

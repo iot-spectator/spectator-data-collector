@@ -10,8 +10,10 @@ from iothealth.device_health import DeviceHealth
 from spectatordb.models import MediaRecord, MediaType
 from spectatordb.spectatordb import SpectatorDB
 
-from collector.camera.monitor import CameraMonitor
+from collector.camera.monitor import CameraMonitor, CameraUnavailableError
 from collector.config import CollectorConfig
+
+__all__ = ["CameraUnavailableError", "SpectatorService"]
 
 
 class SpectatorService:
@@ -49,17 +51,14 @@ class SpectatorService:
         offset: int | None = None,
     ) -> list[MediaRecord]:
         """Query media records with composable filters."""
-        return cast(
-            list[MediaRecord],
-            self._db.query(
-                start=start,
-                end=end,
-                media_type=media_type,
-                device_id=device_id,
-                labels=labels,
-                limit=limit,
-                offset=offset,
-            ),
+        return self._db.query(
+            start=start,
+            end=end,
+            media_type=media_type,
+            device_id=device_id,
+            labels=labels,
+            limit=limit,
+            offset=offset,
         )
 
     def get_record(self, id: str) -> MediaRecord:
@@ -82,11 +81,18 @@ class SpectatorService:
         return dest
 
     def device_status(self) -> dict:
-        """Read device health information."""
+        """Read device health information, including camera liveness."""
         device = DeviceHealth()
-        return cast(dict, device.summary())
+        summary = cast(dict, device.summary())
+        return {**summary, "camera": self._monitor.status().to_dict()}
 
     def capture_now(self) -> dict:
-        """Trigger an immediate capture."""
+        """Trigger an immediate capture.
+
+        Raises
+        ------
+        CameraUnavailableError
+            If the camera monitor is not running, so no capture can happen.
+        """
         self._monitor.request_capture()
         return {"status": "capture requested"}

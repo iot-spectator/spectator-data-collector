@@ -3,8 +3,6 @@
 import logging
 import pathlib
 
-from typing import override
-
 from spectatordb.models import MediaType
 
 from collector.enrichment.base import Enricher, EnrichmentResult
@@ -19,7 +17,6 @@ class LocalEnricher(Enricher):
     embeddings, a small VLM for descriptions).
     """
 
-    @override
     def enrich(self, file: pathlib.Path, media_type: MediaType) -> EnrichmentResult:
         """Return an empty result; stub pending a real model backend."""
         logger.warning("LocalEnricher is a stub; returning empty result.")

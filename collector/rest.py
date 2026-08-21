@@ -12,6 +12,7 @@ from fastapi.responses import FileResponse
 
 from spectatordb.models import MediaType
 
+from collector.camera.monitor import CameraUnavailableError
 from collector.service import SpectatorService
 
 logger = logging.getLogger(__name__)
@@ -93,6 +94,9 @@ def create_app(service: SpectatorService) -> fastapi.FastAPI:
 
     @app.post("/capture", tags=["capture"])
     async def capture() -> dict:
-        return service.capture_now()
+        try:
+            return service.capture_now()
+        except CameraUnavailableError as exc:
+            raise fastapi.HTTPException(status_code=503, detail=str(exc))
 
     return app

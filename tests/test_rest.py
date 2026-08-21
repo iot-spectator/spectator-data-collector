@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from spectatordb.models import MediaRecord, MediaType
 
+from collector.camera.monitor import CameraUnavailableError
 from collector.rest import create_app
 
 
@@ -93,3 +94,13 @@ def test_capture(tmp_path):
     resp = client.post("/capture")
     assert resp.status_code == 200
     assert resp.json()["status"] == "capture requested"
+
+
+def test_capture_camera_unavailable(tmp_path):
+    client, service = _make_client(tmp_path)
+    service.capture_now.side_effect = CameraUnavailableError(
+        "Camera 0 is failed: Cannot open camera 0"
+    )
+    resp = client.post("/capture")
+    assert resp.status_code == 503
+    assert "Cannot open camera 0" in resp.json()["detail"]

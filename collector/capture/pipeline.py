@@ -99,7 +99,14 @@ class CapturePipeline:
             "Stored record %s for %s capture.", record_id, task.media_type.value
         )
 
-        if self._enricher is not None:
+        if record_id is None:
+            logger.warning(
+                "Insert returned no record id for %s capture; skipping enrichment.",
+                task.media_type.value,
+            )
+        elif self._enricher is not None:
+            # Bound after the None check so the closure below sees a plain str.
+            stored_id: str = record_id
             try:
                 result = await loop.run_in_executor(
                     None, self._enricher.enrich, file_path, task.media_type
@@ -109,7 +116,7 @@ class CapturePipeline:
                 await loop.run_in_executor(
                     None,
                     lambda: self._db.update_enrichment(
-                        record_id,
+                        stored_id,
                         labels=result.labels,
                         description=result.description,
                         embedding=embedding if embedding is not None else UNSET,
