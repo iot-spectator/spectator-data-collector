@@ -1,5 +1,7 @@
 """Tests for collector.mcp."""
 
+import json
+
 from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
@@ -15,6 +17,24 @@ def _make_mcp():
     service = MagicMock()
     mcp = create_mcp_server(service)
     return mcp, service
+
+
+def _payload(result):
+    """Return a tool result's value, whichever shape mcp 2.x used for it.
+
+    2.x returns a ``CallToolResult`` instead of the bare sequence of content
+    blocks 1.x returned, and it serializes the two return types differently:
+    a tool declaring ``-> list[...]`` carries the real value in
+    ``structured_content["result"]`` and emits one content block per element
+    (so an empty list emits none), while a tool declaring ``-> dict`` leaves
+    ``structured_content`` unset and emits a single JSON block. Both are
+    normalized back to the value the tool actually returned.
+    """
+    assert result.is_error is False
+    if result.structured_content is not None:
+        return result.structured_content["result"]
+    assert result.content, "tool returned neither structured content nor blocks"
+    return json.loads(result.content[0].text)
 
 
 def _make_record(**kwargs):
@@ -34,7 +54,7 @@ async def test_query_media_tool():
     record = _make_record()
     service.query_media.return_value = [record]
 
-    tools = mcp._tool_manager.list_tools()
+    tools = await mcp.list_tools()
     tool_names = [t.name for t in tools]
     assert "query_media" in tool_names
 
@@ -48,7 +68,10 @@ async def test_query_media_tool():
         limit=10,
         offset=None,
     )
-    assert len(result) > 0
+
+    records = _payload(result)
+    assert len(records) == 1
+    assert records[0]["media_type"] == MediaType.IMAGE.value
 
 
 @pytest.mark.asyncio
@@ -72,6 +95,16 @@ async def test_query_media_with_labels():
 
 
 @pytest.mark.asyncio
+async def test_query_media_returns_empty_list_when_nothing_matches():
+    """An empty result emits zero content blocks under mcp 2.x."""
+    mcp, service = _make_mcp()
+    service.query_media.return_value = []
+
+    result = await mcp.call_tool("query_media", {"limit": 10})
+    assert _payload(result) == []
+
+
+@pytest.mark.asyncio
 async def test_get_record_tool():
     mcp, service = _make_mcp()
     record = _make_record(id="test-id")
@@ -79,7 +112,7 @@ async def test_get_record_tool():
 
     result = await mcp.call_tool("get_record", {"id": "test-id"})
     service.get_record.assert_called_once_with("test-id")
-    assert len(result) > 0
+    assert _payload(result)["id"] == "test-id"
 
 
 @pytest.mark.asyncio
@@ -89,7 +122,7 @@ async def test_device_status_tool():
 
     result = await mcp.call_tool("device_status", {})
     service.device_status.assert_called_once()
-    assert len(result) > 0
+    assert _payload(result) == {"cpu": "ok", "memory": "ok"}
 
 
 @pytest.mark.asyncio
@@ -99,7 +132,7 @@ async def test_capture_now_tool():
 
     result = await mcp.call_tool("capture_now", {})
     service.capture_now.assert_called_once()
-    assert len(result) > 0
+    assert _payload(result) == {"status": "capture requested"}
 
 
 @pytest.mark.asyncio
@@ -116,6 +149,6 @@ async def test_capture_now_tool_errors_when_camera_unavailable():
 @pytest.mark.asyncio
 async def test_all_tools_registered():
     mcp, _ = _make_mcp()
-    tools = mcp._tool_manager.list_tools()
+    tools = await mcp.list_tools()
     tool_names = {t.name for t in tools}
     assert tool_names == {"query_media", "get_record", "device_status", "capture_now"}
