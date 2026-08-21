@@ -15,11 +15,16 @@ dependencies = [
     "iothealth",
     "fastapi",
     "uvicorn",
+    # Imported directly by collector.collector for the MCP app type; not
+    # relied on as a transitive dependency of fastapi.
+    "starlette",
     "opencv-python",
     "numpy",
-    # 2.0 renamed mcp.server.fastmcp -> mcp.server.mcpserver; collector/mcp.py
-    # still targets the 1.x FastMCP API.
-    "mcp<2",
+    # Upper bound is deliberate: 2.0 renamed mcp.server.fastmcp ->
+    # mcp.server.mcpserver and changed call_tool's return type, so a major
+    # bump is a breaking change for collector/mcp.py. Raise it only after
+    # porting.
+    "mcp>=2,<3",
 ]
 
 [tool.setuptools.packages.find]

@@ -2,6 +2,7 @@ spectator-db
 iothealth
 fastapi
 uvicorn
+starlette
 opencv-python
 numpy
-mcp<2
+mcp>=2,<3
