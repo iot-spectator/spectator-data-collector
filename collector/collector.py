@@ -6,6 +6,8 @@ import pathlib
 
 import uvicorn
 
+from starlette.applications import Starlette
+
 from spectatordb.metadata.sqlite_metadata_store import SQLiteMetadataStore
 from spectatordb.spectatordb import SpectatorDB
 from spectatordb.storage.local_storage import LocalStorage
@@ -21,6 +23,30 @@ from collector.rest import create_app
 from collector.service import SpectatorService
 
 logger = logging.getLogger(__name__)
+
+
+def create_mcp_app(service: SpectatorService, config: CollectorConfig) -> Starlette:
+    """Build the MCP SSE application bound to the configured host.
+
+    The host is passed explicitly rather than left to default. mcp 2.x
+    auto-enables DNS rebinding protection when ``sse_app()``'s host is a
+    loopback address, and it defaults to ``127.0.0.1`` — which would reject
+    the LAN clients this server exists to serve.
+
+    Parameters
+    ----------
+    service : SpectatorService
+        The shared service layer.
+    config : CollectorConfig
+        Collector configuration; ``config.mcp.host`` is the bind host.
+
+    Returns
+    -------
+    Starlette
+        The MCP SSE application.
+    """
+    mcp = create_mcp_server(service)
+    return mcp.sse_app(host=config.mcp.host)
 
 
 class SpectatorDataCollector:
@@ -77,8 +103,7 @@ class SpectatorDataCollector:
         ]
 
         if self._config.mcp.enabled:
-            mcp = create_mcp_server(service)
-            mcp_app = mcp.sse_app()
+            mcp_app = create_mcp_app(service, self._config)
             mcp_config = uvicorn.Config(
                 app=mcp_app,
                 host=self._config.mcp.host,

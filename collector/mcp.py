@@ -12,7 +12,7 @@ import logging
 
 from datetime import datetime
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 from spectatordb.models import MediaType
 
@@ -21,7 +21,7 @@ from collector.service import SpectatorService
 logger = logging.getLogger(__name__)
 
 
-def create_mcp_server(service: SpectatorService) -> FastMCP:
+def create_mcp_server(service: SpectatorService) -> MCPServer:
     """Create the MCP server with tools backed by the shared service layer.
 
     Parameters
@@ -31,10 +31,10 @@ def create_mcp_server(service: SpectatorService) -> FastMCP:
 
     Returns
     -------
-    FastMCP
+    MCPServer
         The configured MCP server.
     """
-    mcp = FastMCP(
+    mcp = MCPServer(
         name="spectator",
         instructions=(
             "Spectator Data Collector MCP server. "

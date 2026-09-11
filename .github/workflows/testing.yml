@@ -28,3 +28,28 @@ jobs:
         fail_ci_if_error: false
         verbose: true
 
+  # Early warning for the next mcp major. The dependency is capped at <3 on
+  # purpose, so a breaking 3.0 would otherwise stay invisible until someone
+  # raised the bound — which is exactly how the 1.x -> 2.0 rename of
+  # mcp.server.fastmcp went unnoticed. This job deliberately ignores the cap.
+  # It is allowed to fail: it reports, it does not gate.
+  mcp-latest:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.13"
+    - name: Install dependencies with the newest mcp
+      run: |
+        pip install -r dev-requirements.txt
+        pip install --upgrade "mcp"
+    - name: Report the resolved mcp version
+      run: pip show mcp | head -2
+    - name: Import the MCP module and run its tests
+      run: |
+        python -c "import collector.mcp; print('collector.mcp imports')"
+        pytest tests/test_mcp.py tests/test_collector_wiring.py -q
